@@ -1,0 +1,46 @@
+[
+  {
+    "id": "ATT-2026-1001",
+    "courseId": "CS301",
+    "date": "2026-10-25",
+    "topic": "Graph Algorithms: Dijkstra & A*",
+    "markedBy": "Dr. Rajesh Kumar",
+    "records": [
+      { "studentId": "STU1001", "status": "Present" },
+      { "studentId": "STU1002", "status": "Present" },
+      { "studentId": "STU1003", "status": "Absent" },
+      { "studentId": "STU1004", "status": "Present" },
+      { "studentId": "STU1005", "status": "Absent" },
+      { "studentId": "STU1006", "status": "Present" },
+      { "studentId": "STU1008", "status": "Present" }
+    ]
+  },
+  {
+    "id": "ATT-2026-1002",
+    "courseId": "CS301",
+    "date": "2026-10-27",
+    "topic": "Dynamic Programming: Knapsack & Longest Common Subsequence",
+    "markedBy": "Dr. Rajesh Kumar",
+    "records": [
+      { "studentId": "STU1001", "status": "Present" },
+      { "studentId": "STU1002", "status": "Present" },
+      { "studentId": "STU1003", "status": "Late" },
+      { "studentId": "STU1004", "status": "Present" },
+      { "studentId": "STU1005", "status": "Absent" },
+      { "studentId": "STU1006", "status": "Present" },
+      { "studentId": "STU1008", "status": "Present" }
+    ]
+  },
+  {
+    "id": "ATT-2026-1003",
+    "courseId": "CS305",
+    "date": "2026-10-26",
+    "topic": "Sprint Planning, User Stories & Story Point Estimation",
+    "markedBy": "Dr. Rajesh Kumar",
+    "records": [
+      { "studentId": "STU1001", "status": "Present" },
+      { "studentId": "STU1002", "status": "Present" },
+      { "studentId": "STU1006", "status": "Present" }
+    ]
+  }
+]

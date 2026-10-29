@@ -1,0 +1,62 @@
+[
+  {
+    "id": "CS301",
+    "code": "CS301",
+    "name": "Data Structures & Algorithms",
+    "department": "Computer Science",
+    "credits": 4,
+    "instructor": "Dr. Rajesh Kumar",
+    "facultyId": "FAC101",
+    "semester": "Semester 5",
+    "enrolledStudents": ["STU1001", "STU1002", "STU1003", "STU1004", "STU1005", "STU1006", "STU1008"],
+    "description": "Comprehensive study of advanced data structures, algorithmic complexity, graph theory, and dynamic programming."
+  },
+  {
+    "id": "CS302",
+    "code": "CS302",
+    "name": "Database Management Systems",
+    "department": "Computer Science",
+    "credits": 3,
+    "instructor": "Prof. Meera Sen",
+    "facultyId": "FAC102",
+    "semester": "Semester 5",
+    "enrolledStudents": ["STU1001", "STU1002", "STU1006"],
+    "description": "Relational models, SQL query optimization, normalization, indexing, transaction management, and ACID compliance."
+  },
+  {
+    "id": "CS305",
+    "code": "CS305",
+    "name": "Agile Software Engineering & DevOps",
+    "department": "Computer Science",
+    "credits": 3,
+    "instructor": "Dr. Rajesh Kumar",
+    "facultyId": "FAC101",
+    "semester": "Semester 5",
+    "enrolledStudents": ["STU1001", "STU1002", "STU1006"],
+    "description": "Scrum ceremonies, User Story planning, automated CI/CD pipelines, containerization, and sprint burndown tracking."
+  },
+  {
+    "id": "IT201",
+    "code": "IT201",
+    "name": "Web Technologies & REST APIs",
+    "department": "Information Technology",
+    "credits": 3,
+    "instructor": "Prof. Nikhil Rao",
+    "facultyId": "FAC103",
+    "semester": "Semester 3",
+    "enrolledStudents": ["STU1003"],
+    "description": "Full-stack client-server architecture, modern Javascript, responsive CSS layouts, and asynchronous REST APIs."
+  },
+  {
+    "id": "ME201",
+    "code": "ME201",
+    "name": "Thermodynamics & Heat Transfer",
+    "department": "Mechanical Engineering",
+    "credits": 4,
+    "instructor": "Dr. Sunil Verma",
+    "facultyId": "FAC104",
+    "semester": "Semester 3",
+    "enrolledStudents": ["STU1005"],
+    "description": "Laws of thermodynamics, heat exchangers, power cycles, and entropy analysis."
+  }
+]

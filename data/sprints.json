@@ -1,0 +1,94 @@
+[
+  {
+    "id": "SP-1",
+    "name": "Sprint 1",
+    "goal": "Develop user authentication and project setup.",
+    "status": "Completed",
+    "startDate": "2026-09-15",
+    "endDate": "2026-09-28",
+    "committedPoints": 11,
+    "completedPoints": 11,
+    "burndownDays": [
+      { "day": "Day 0", "ideal": 11, "actual": 11 },
+      { "day": "Day 1", "ideal": 9.9, "actual": 11 },
+      { "day": "Day 2", "ideal": 8.8, "actual": 11 },
+      { "day": "Day 3", "ideal": 7.7, "actual": 8 },
+      { "day": "Day 4", "ideal": 6.6, "actual": 7 },
+      { "day": "Day 5", "ideal": 5.5, "actual": 7 },
+      { "day": "Day 6", "ideal": 4.4, "actual": 7 },
+      { "day": "Day 7", "ideal": 3.3, "actual": 5 },
+      { "day": "Day 8", "ideal": 2.2, "actual": 0 },
+      { "day": "Day 9", "ideal": 1.1, "actual": 0 },
+      { "day": "Day 10", "ideal": 0, "actual": 0 }
+    ]
+  },
+  {
+    "id": "SP-2",
+    "name": "Sprint 2",
+    "goal": "Develop Student Management Module.",
+    "status": "Completed",
+    "startDate": "2026-09-29",
+    "endDate": "2026-10-12",
+    "committedPoints": 13,
+    "completedPoints": 13,
+    "burndownDays": [
+      { "day": "Day 0", "ideal": 13, "actual": 13 },
+      { "day": "Day 1", "ideal": 11.7, "actual": 13 },
+      { "day": "Day 2", "ideal": 10.4, "actual": 10 },
+      { "day": "Day 3", "ideal": 9.1, "actual": 10 },
+      { "day": "Day 4", "ideal": 7.8, "actual": 8 },
+      { "day": "Day 5", "ideal": 6.5, "actual": 8 },
+      { "day": "Day 6", "ideal": 5.2, "actual": 5 },
+      { "day": "Day 7", "ideal": 3.9, "actual": 5 },
+      { "day": "Day 8", "ideal": 2.6, "actual": 2 },
+      { "day": "Day 9", "ideal": 1.3, "actual": 0 },
+      { "day": "Day 10", "ideal": 0, "actual": 0 }
+    ]
+  },
+  {
+    "id": "SP-3",
+    "name": "Sprint 3",
+    "goal": "Develop Course and Attendance Management.",
+    "status": "Completed",
+    "startDate": "2026-10-13",
+    "endDate": "2026-10-26",
+    "committedPoints": 20,
+    "completedPoints": 20,
+    "burndownDays": [
+      { "day": "Day 0", "ideal": 20, "actual": 20 },
+      { "day": "Day 1", "ideal": 18, "actual": 20 },
+      { "day": "Day 2", "ideal": 16, "actual": 17 },
+      { "day": "Day 3", "ideal": 14, "actual": 15 },
+      { "day": "Day 4", "ideal": 12, "actual": 15 },
+      { "day": "Day 5", "ideal": 10, "actual": 10 },
+      { "day": "Day 6", "ideal": 8, "actual": 8 },
+      { "day": "Day 7", "ideal": 6, "actual": 8 },
+      { "day": "Day 8", "ideal": 4, "actual": 3 },
+      { "day": "Day 9", "ideal": 2, "actual": 1 },
+      { "day": "Day 10", "ideal": 0, "actual": 0 }
+    ]
+  },
+  {
+    "id": "SP-4",
+    "name": "Sprint 4",
+    "goal": "Develop Marks & Academic Performance, Alerts & Reporting.",
+    "status": "In Progress",
+    "startDate": "2026-10-27",
+    "endDate": "2026-11-09",
+    "committedPoints": 21,
+    "completedPoints": 0,
+    "burndownDays": [
+      { "day": "Day 0", "ideal": 21, "actual": 21 },
+      { "day": "Day 1", "ideal": 18.9, "actual": 21 },
+      { "day": "Day 2", "ideal": 16.8, "actual": 18 },
+      { "day": "Day 3", "ideal": 14.7, "actual": 16 },
+      { "day": "Day 4", "ideal": 12.6, "actual": 13 },
+      { "day": "Day 5", "ideal": 10.5, "actual": 10 },
+      { "day": "Day 6", "ideal": 8.4, "actual": 8 },
+      { "day": "Day 7", "ideal": 6.3, "actual": 5 },
+      { "day": "Day 8", "ideal": 4.2, "actual": 3 },
+      { "day": "Day 9", "ideal": 2.1, "actual": 0 },
+      { "day": "Day 10", "ideal": 0, "actual": 0 }
+    ]
+  }
+]

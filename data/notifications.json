@@ -1,0 +1,47 @@
+[
+  {
+    "id": "NOTIF-101",
+    "type": "warning",
+    "title": "Low Attendance Warning (< 75%)",
+    "message": "Student Kabir Das (STU1005) has an overall attendance of 64.0% in CS301. Immediate counseling required before exam debarment.",
+    "date": "2026-10-28 10:15",
+    "read": false,
+    "targetRole": "all"
+  },
+  {
+    "id": "NOTIF-102",
+    "type": "warning",
+    "title": "Attendance Alert (< 75%)",
+    "message": "Student Rohan Gupta (STU1003) attendance has dropped to 71.4%. Advised to attend upcoming tutorials.",
+    "date": "2026-10-28 09:30",
+    "read": false,
+    "targetRole": "all"
+  },
+  {
+    "id": "NOTIF-103",
+    "type": "info",
+    "title": "Midterm Examination Schedule Released",
+    "message": "Midterm examinations for Semester 5 commence from November 12, 2026. Hall tickets available on the portal.",
+    "date": "2026-10-27 14:00",
+    "read": true,
+    "targetRole": "student"
+  },
+  {
+    "id": "NOTIF-104",
+    "type": "success",
+    "title": "Continuous Assessment Marks Published",
+    "message": "Internal assessment and midterm scores for CS301 (Data Structures) have been finalized by Dr. Rajesh Kumar.",
+    "date": "2026-10-27 16:45",
+    "read": false,
+    "targetRole": "all"
+  },
+  {
+    "id": "NOTIF-105",
+    "type": "info",
+    "title": "Sprint 3 Review Completed Successfully",
+    "message": "Scrum Team demonstrated Course and Attendance Modules. Product Owner accepted 20 Story Points with zero defects.",
+    "date": "2026-10-26 17:30",
+    "read": true,
+    "targetRole": "admin"
+  }
+]

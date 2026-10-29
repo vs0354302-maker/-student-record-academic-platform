@@ -1,0 +1,25 @@
+{
+  "name": "student-record-and-academic-management-platform",
+  "version": "1.0.0",
+  "description": "Student Record and Academic Management Platform (SRAMP) - Unit-2 Agile Mini-Project with Full Scrum Suite & Functional Academic System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "agile",
+    "scrum",
+    "student-management",
+    "attendance",
+    "academic-performance",
+    "burndown-chart",
+    "sprint-planning"
+  ],
+  "author": "Agile Development Team",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}

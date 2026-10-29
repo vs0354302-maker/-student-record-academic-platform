@@ -1,0 +1,110 @@
+[
+  {
+    "id": "MRK-001",
+    "studentId": "STU1001",
+    "courseId": "CS301",
+    "internal": 19,
+    "midterm": 28,
+    "endSem": 45,
+    "total": 92,
+    "grade": "A+",
+    "gpa": 10.0,
+    "lastUpdated": "2026-10-28"
+  },
+  {
+    "id": "MRK-002",
+    "studentId": "STU1002",
+    "courseId": "CS301",
+    "internal": 18,
+    "midterm": 27,
+    "endSem": 46,
+    "total": 91,
+    "grade": "A+",
+    "gpa": 10.0,
+    "lastUpdated": "2026-10-28"
+  },
+  {
+    "id": "MRK-003",
+    "studentId": "STU1003",
+    "courseId": "CS301",
+    "internal": 14,
+    "midterm": 22,
+    "endSem": 38,
+    "total": 74,
+    "grade": "B",
+    "gpa": 8.0,
+    "lastUpdated": "2026-10-28"
+  },
+  {
+    "id": "MRK-004",
+    "studentId": "STU1004",
+    "courseId": "CS301",
+    "internal": 16,
+    "midterm": 25,
+    "endSem": 41,
+    "total": 82,
+    "grade": "A",
+    "gpa": 9.0,
+    "lastUpdated": "2026-10-28"
+  },
+  {
+    "id": "MRK-005",
+    "studentId": "STU1005",
+    "courseId": "CS301",
+    "internal": 10,
+    "midterm": 16,
+    "endSem": 26,
+    "total": 52,
+    "grade": "D",
+    "gpa": 6.0,
+    "lastUpdated": "2026-10-28"
+  },
+  {
+    "id": "MRK-006",
+    "studentId": "STU1006",
+    "courseId": "CS301",
+    "internal": 20,
+    "midterm": 29,
+    "endSem": 47,
+    "total": 96,
+    "grade": "A+",
+    "gpa": 10.0,
+    "lastUpdated": "2026-10-28"
+  },
+  {
+    "id": "MRK-007",
+    "studentId": "STU1008",
+    "courseId": "CS301",
+    "internal": 17,
+    "midterm": 24,
+    "endSem": 43,
+    "total": 84,
+    "grade": "A",
+    "gpa": 9.0,
+    "lastUpdated": "2026-10-28"
+  },
+  {
+    "id": "MRK-008",
+    "studentId": "STU1001",
+    "courseId": "CS302",
+    "internal": 18,
+    "midterm": 26,
+    "endSem": 44,
+    "total": 88,
+    "grade": "A",
+    "gpa": 9.0,
+    "lastUpdated": "2026-10-28"
+  },
+  {
+    "id": "MRK-009",
+    "studentId": "STU1001",
+    "courseId": "CS305",
+    "internal": 20,
+    "midterm": 28,
+    "endSem": 46,
+    "total": 94,
+    "grade": "A+",
+    "gpa": 10.0,
+    "lastUpdated": "2026-10-28"
+  }
+]

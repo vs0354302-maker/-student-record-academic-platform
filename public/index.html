@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduPulse SRAMP — Student Record & Academic Management Platform</title>
+  <meta name="description" content="Unit-2 Agile Mini-Project: Scalable Student Record and Academic Management Platform with Integrated Scrum Board, Burndown Charts, and Academic Portals.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-container">
+  
+  <!-- TOP NAVIGATION BAR -->
+  <header class="top-navbar">
+    <div class="brand-section">
+      <div class="brand-logo" onclick="switchMainTab('students')">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <span>EduPulse SRAMP</span>
+      </div>
+      <span class="badge-tag"><i class="fa-solid fa-code-branch"></i> Unit-2 Agile Mini-Project</span>
+    </div>
+
+    <div class="header-controls">
+      <!-- Persona Switcher (RBAC) -->
+      <div class="persona-switcher">
+        <span class="persona-label"><i class="fa-solid fa-user-shield"></i> Active Persona:</span>
+        <select id="personaSelect" class="persona-select" onchange="changePersona(this.value)">
+          <option value="admin">👑 Administrator (Dean Anita)</option>
+          <option value="faculty">👨‍🏫 Faculty (Dr. Rajesh Kumar)</option>
+          <option value="student">🎓 Student (Priya Sharma)</option>
+        </select>
+      </div>
+
+      <!-- Notification Bell -->
+      <div class="notif-btn-wrapper">
+        <button class="icon-btn" id="notifBellBtn" onclick="toggleNotifDropdown()" title="Notifications & Alerts">
+          <i class="fa-regular fa-bell"></i>
+          <span class="notif-badge" id="notifCountBadge">3</span>
+        </button>
+
+        <!-- Dropdown Feed -->
+        <div class="notif-dropdown" id="notifDropdown">
+          <div class="notif-header">
+            <h4><i class="fa-solid fa-bell text-primary"></i> Academic Alerts</h4>
+            <button class="btn btn-sm btn-secondary" onclick="markAllNotifsRead()">Mark All Read</button>
+          </div>
+          <div class="notif-body" id="notifListContainer">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN NAVIGATION TABS -->
+  <nav class="main-nav-bar">
+    <button class="nav-tab-btn active" id="tabBtn-students" onclick="switchMainTab('students')">
+      <i class="fa-solid fa-users"></i> Students
+    </button>
+    <button class="nav-tab-btn" id="tabBtn-courses" onclick="switchMainTab('courses')">
+      <i class="fa-solid fa-book-open"></i> Courses
+    </button>
+    <button class="nav-tab-btn" id="tabBtn-attendance" onclick="switchMainTab('attendance')">
+      <i class="fa-solid fa-calendar-check"></i> Attendance Hub
+    </button>
+    <button class="nav-tab-btn" id="tabBtn-marks" onclick="switchMainTab('marks')">
+      <i class="fa-solid fa-award"></i> Marks & Grades
+    </button>
+    <button class="nav-tab-btn" id="tabBtn-reports" onclick="switchMainTab('reports')">
+      <i class="fa-solid fa-chart-line"></i> Analytics & Reports
+    </button>
+    <button class="nav-tab-btn" id="tabBtn-agile" onclick="switchMainTab('agile')">
+      <i class="fa-solid fa-cubes"></i> Agile Scrum Suite <span class="nav-pill-agile">Live</span>
+    </button>
+    <button class="nav-tab-btn" id="tabBtn-docs" onclick="switchMainTab('docs')">
+      <i class="fa-solid fa-book-bookmark"></i> Agile Deliverables
+    </button>
+  </nav>
+
+  <!-- MAIN VIEWPORT -->
+  <main class="main-view-container">
+
+    <!-- TAB 1: STUDENTS (Epic 1) -->
+    <section class="view-section active" id="view-students">
+      <div class="section-header-row">
+        <div class="section-title-wrap">
+          <h2><i class="fa-solid fa-id-card-clip text-primary"></i> Student Lifecycle Directory</h2>
+          <p>Manage student admission records, contact profiles, enrollment status, and academic standing.</p>
+        </div>
+        <div class="action-buttons-group">
+          <button class="btn btn-secondary" onclick="exportStudentsCsv()"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+          <button class="btn btn-primary rbac-admin-only" onclick="openAddStudentModal()"><i class="fa-solid fa-user-plus"></i> Register Student</button>
+        </div>
+      </div>
+
+      <!-- Quick KPI Row -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon-wrap"><i class="fa-solid fa-user-graduate"></i></div>
+          <div class="kpi-info">
+            <h3 id="statTotalStudents">8</h3>
+            <p>Total Registered Students</p>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon-wrap" style="color: #10b981; background: rgba(16,185,129,0.12);"><i class="fa-solid fa-circle-check"></i></div>
+          <div class="kpi-info">
+            <h3 id="statActiveStudents">6</h3>
+            <p>Active In Good Standing</p>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon-wrap" style="color: #f59e0b; background: rgba(245,158,11,0.12);"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div class="kpi-info">
+            <h3 id="statProbationStudents">1</h3>
+            <p>Attendance Warning (&lt;75%)</p>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon-wrap" style="color: #06b6d4; background: rgba(6,182,212,0.12);"><i class="fa-solid fa-star"></i></div>
+          <div class="kpi-info">
+            <h3 id="statAvgCgpa">8.32</h3>
+            <p>Average Institutional CGPA</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Controls -->
+      <div class="filter-row">
+        <div class="search-input-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="studentSearchInput" class="search-input" placeholder="Search by name, roll number, or email..." oninput="handleStudentSearch()">
+        </div>
+        <select id="studentDeptFilter" class="select-filter" onchange="handleStudentSearch()">
+          <option value="ALL">All Departments</option>
+          <option value="Computer Science">Computer Science</option>
+          <option value="Information Technology">Information Technology</option>
+          <option value="Electrical Engineering">Electrical Engineering</option>
+          <option value="Mechanical Engineering">Mechanical Engineering</option>
+        </select>
+        <select id="studentStatusFilter" class="select-filter" onchange="handleStudentSearch()">
+          <option value="ALL">All Statuses</option>
+          <option value="Active">Active</option>
+          <option value="Probation">Probation</option>
+          <option value="Graduated">Graduated</option>
+        </select>
+      </div>
+
+      <!-- Students Table -->
+      <div class="glass-panel" style="padding: 0; overflow: hidden;">
+        <div class="table-responsive">
+          <table class="modern-table" id="studentsTable">
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Department</th>
+                <th>Year</th>
+                <th>Attendance</th>
+                <th>CGPA</th>
+                <th>Status</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="studentsTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: COURSES (Epic 2) -->
+    <section class="view-section" id="view-courses">
+      <div class="section-header-row">
+        <div class="section-title-wrap">
+          <h2><i class="fa-solid fa-graduation-cap text-primary"></i> Academic Course Catalog</h2>
+          <p>Configure departmental curricula, assign faculty instructors, and manage student enrollments.</p>
+        </div>
+        <div class="action-buttons-group">
+          <button class="btn btn-primary rbac-admin-only" onclick="openAddCourseModal()"><i class="fa-solid fa-plus-circle"></i> Add Course Offering</button>
+        </div>
+      </div>
+
+      <div class="course-grid" id="courseCardsGrid">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- TAB 3: ATTENDANCE (Epic 3) -->
+    <section class="view-section" id="view-attendance">
+      <div class="section-header-row">
+        <div class="section-title-wrap">
+          <h2><i class="fa-solid fa-clipboard-user text-primary"></i> Classroom Attendance Tracking Hub</h2>
+          <p>Fast 1-click digital lecture attendance with automated percentage rollups and threshold auditing.</p>
+        </div>
+        <div class="action-buttons-group">
+          <button class="btn btn-secondary" onclick="exportAttendanceSummary()"><i class="fa-solid fa-download"></i> Attendance Report</button>
+        </div>
+      </div>
+
+      <!-- Attendance Session Setup Panel -->
+      <div class="glass-panel" style="margin-bottom: 1.5rem;">
+        <div class="form-grid" style="align-items: flex-end;">
+          <div class="form-group">
+            <label>Select Course Offering</label>
+            <select id="attCourseSelect" class="form-select" onchange="loadAttendanceRoster()">
+              <!-- Options populated via JS -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Lecture Date</label>
+            <input type="date" id="attDateInput" class="form-input">
+          </div>
+          <div class="form-group">
+            <label>Lecture Topic / Agenda</label>
+            <input type="text" id="attTopicInput" class="form-input" placeholder="e.g. Graph Algorithms & Dijkstra">
+          </div>
+          <div class="form-group">
+            <button class="btn btn-secondary" style="width: 100%;" onclick="markAllAttendancePresent()">
+              <i class="fa-solid fa-check-double text-success"></i> Mark All Present
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Attendance Roster Sheet -->
+      <div class="glass-panel" style="padding: 0; overflow: hidden; margin-bottom: 2rem;">
+        <div style="padding: 1rem 1.5rem; background: rgba(15,23,42,0.6); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle);">
+          <h4 id="attRosterCourseTitle"><i class="fa-solid fa-list-check"></i> Course Roster</h4>
+          <span style="font-size: 0.8rem; color: var(--text-muted);" id="attEnrolledCountBadge">Enrolled: 0 Students</span>
+        </div>
+        <div class="table-responsive">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Department</th>
+                <th>Historical Rate</th>
+                <th>Session Attendance (Toggle P / A / L)</th>
+              </tr>
+            </thead>
+            <tbody id="attRosterTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+        <div style="padding: 1.25rem; display: flex; justify-content: flex-end; background: rgba(15,23,42,0.4); border-top: 1px solid var(--border-subtle);">
+          <button class="btn btn-success" onclick="saveAttendanceSession()"><i class="fa-solid fa-floppy-disk"></i> Commit Attendance Session</button>
+        </div>
+      </div>
+
+      <!-- Past Sessions Log -->
+      <div class="glass-panel">
+        <h4 style="margin-bottom: 1rem;"><i class="fa-solid fa-clock-rotate-left"></i> Historical Lecture Logs for Selected Course</h4>
+        <div class="table-responsive">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>Session ID</th>
+                <th>Date</th>
+                <th>Topic</th>
+                <th>Instructor</th>
+                <th>Present</th>
+                <th>Absent</th>
+                <th>Attendance %</th>
+              </tr>
+            </thead>
+            <tbody id="attPastSessionsBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: MARKS & PERFORMANCE (Epic 4) -->
+    <section class="view-section" id="view-marks">
+      <div class="section-header-row">
+        <div class="section-title-wrap">
+          <h2><i class="fa-solid fa-award text-primary"></i> Academic Marks & Grade Compilation</h2>
+          <p>Enter continuous assessment marks, calculate letter grades automatically, and generate official student result sheets.</p>
+        </div>
+        <div class="action-buttons-group">
+          <button class="btn btn-secondary" onclick="openResultSheetModal()"><i class="fa-solid fa-print"></i> Generate Result Sheet</button>
+        </div>
+      </div>
+
+      <!-- Course Selector for Marks -->
+      <div class="glass-panel" style="margin-bottom: 1.5rem;">
+        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+          <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Select Evaluation Course:</label>
+          <select id="marksCourseSelect" class="select-filter" style="min-width: 300px;" onchange="loadMarksSheet()">
+            <!-- Options populated via JS -->
+          </select>
+          <span style="font-size: 0.78rem; color: var(--text-muted); margin-left: auto;">
+            Evaluation Weights: Internal (20) + Midterm (30) + End-Sem (50) = 100 Marks
+          </span>
+        </div>
+      </div>
+
+      <!-- Marks Matrix Table -->
+      <div class="glass-panel" style="padding: 0; overflow: hidden;">
+        <div class="table-responsive">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Internal (Max 20)</th>
+                <th>Midterm (Max 30)</th>
+                <th>End-Semester (Max 50)</th>
+                <th>Total (100)</th>
+                <th>Grade</th>
+                <th>GPA</th>
+                <th style="text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="marksTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: REPORTS & ANALYTICS (Epic 7) -->
+    <section class="view-section" id="view-reports">
+      <div class="section-header-row">
+        <div class="section-title-wrap">
+          <h2><i class="fa-solid fa-chart-pie text-primary"></i> Institutional Analytics & Reporting</h2>
+          <p>Aggregated metrics, grade distribution histograms, and attendance compliance tracking.</p>
+        </div>
+        <div class="action-buttons-group">
+          <button class="btn btn-secondary" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Executive Summary</button>
+        </div>
+      </div>
+
+      <!-- Charts Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        <div class="glass-panel">
+          <h4 style="margin-bottom: 1rem;"><i class="fa-solid fa-chart-column text-primary"></i> Grade Distribution Curve (Letter Grades)</h4>
+          <div class="canvas-wrapper">
+            <canvas id="gradeDistCanvas" width="500" height="260"></canvas>
+          </div>
+        </div>
+        <div class="glass-panel">
+          <h4 style="margin-bottom: 1rem;"><i class="fa-solid fa-chart-pie text-accent"></i> Attendance Compliance Breakdown</h4>
+          <div class="canvas-wrapper">
+            <canvas id="attendanceDonutCanvas" width="500" height="260"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Departmental Rollup Summary Table -->
+      <div class="glass-panel" style="padding: 0; overflow: hidden;">
+        <div style="padding: 1rem 1.5rem; background: rgba(15,23,42,0.6); border-bottom: 1px solid var(--border-subtle);">
+          <h4><i class="fa-solid fa-building-columns"></i> Departmental Academic Summary</h4>
+        </div>
+        <div class="table-responsive">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>Department</th>
+                <th>Enrolled Students</th>
+                <th>Courses Offered</th>
+                <th>Avg Attendance %</th>
+                <th>Avg CGPA</th>
+                <th>Compliance Status</th>
+              </tr>
+            </thead>
+            <tbody id="deptSummaryTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: AGILE SCRUM SUITE (Unit-2 Activities 8-12) -->
+    <section class="view-section" id="view-agile">
+      <div class="section-header-row">
+        <div class="section-title-wrap">
+          <h2><i class="fa-solid fa-cubes-stacked text-primary"></i> Agile Scrum Management Suite</h2>
+          <p>Interactive Scrum Board, Sprint Burndown visualizers, Planning Poker estimator, and Scrum ceremonies.</p>
+        </div>
+        <div class="action-buttons-group">
+          <button class="btn btn-primary" onclick="openAddStoryModal()"><i class="fa-solid fa-plus"></i> Add User Story</button>
+        </div>
+      </div>
+
+      <!-- Agile Navigation Sub-Tabs -->
+      <div class="agile-subnav">
+        <button class="agile-subtab-btn active" id="subtabBtn-board" onclick="switchAgileSubTab('board')">
+          <i class="fa-solid fa-table-columns"></i> Interactive Scrum Board
+        </button>
+        <button class="agile-subtab-btn" id="subtabBtn-burndown" onclick="switchAgileSubTab('burndown')">
+          <i class="fa-solid fa-chart-area"></i> Sprint Burndown Charts
+        </button>
+        <button class="agile-subtab-btn" id="subtabBtn-poker" onclick="switchAgileSubTab('poker')">
+          <i class="fa-solid fa-dice-d20"></i> Planning Poker Estimator
+        </button>
+        <button class="agile-subtab-btn" id="subtabBtn-ceremonies" onclick="switchAgileSubTab('ceremonies')">
+          <i class="fa-solid fa-comments"></i> Scrum Ceremonies Simulator
+        </button>
+        <button class="agile-subtab-btn" id="subtabBtn-frameworks" onclick="switchAgileSubTab('frameworks')">
+          <i class="fa-solid fa-scale-balanced"></i> Agile Frameworks Matrix
+        </button>
+      </div>
+
+      <!-- SUB-TAB A: SCRUM BOARD -->
+      <div class="agile-subview" id="agile-subview-board">
+        <!-- Board Filter Row -->
+        <div class="filter-row" style="margin-bottom: 1.5rem;">
+          <div style="display: flex; gap: 1rem; align-items: center;">
+            <label style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">Filter by Sprint:</label>
+            <select id="scrumSprintFilter" class="select-filter" onchange="renderScrumBoard()">
+              <option value="ALL">All Sprints (Complete Backlog)</option>
+              <option value="Sprint 1">Sprint 1 (Auth & Setup)</option>
+              <option value="Sprint 2">Sprint 2 (Student Management)</option>
+              <option value="Sprint 3">Sprint 3 (Course & Attendance)</option>
+              <option value="Sprint 4" selected>Sprint 4 (Marks, Alerts & Reports)</option>
+            </select>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">
+            Drag or use arrow buttons to move stories through the workflow columns
+          </div>
+        </div>
+
+        <!-- 5-Column Scrum Board Grid -->
+        <div class="scrum-board-grid">
+          <!-- Backlog -->
+          <div class="scrum-column col-backlog" ondragover="allowDrop(event)" ondrop="handleDrop(event, 'backlog')">
+            <div class="scrum-column-header">
+              <span class="column-title"><i class="fa-solid fa-inbox"></i> Backlog</span>
+              <span class="column-count" id="count-backlog">0</span>
+            </div>
+            <div class="scrum-cards-container" id="cards-backlog"></div>
+          </div>
+
+          <!-- To Do -->
+          <div class="scrum-column col-todo" ondragover="allowDrop(event)" ondrop="handleDrop(event, 'todo')">
+            <div class="scrum-column-header">
+              <span class="column-title"><i class="fa-regular fa-circle-dot"></i> To Do</span>
+              <span class="column-count" id="count-todo">0</span>
+            </div>
+            <div class="scrum-cards-container" id="cards-todo"></div>
+          </div>
+
+          <!-- In Progress -->
+          <div class="scrum-column col-in-progress" ondragover="allowDrop(event)" ondrop="handleDrop(event, 'in-progress')">
+            <div class="scrum-column-header">
+              <span class="column-title"><i class="fa-solid fa-spinner fa-spin"></i> In Progress</span>
+              <span class="column-count" id="count-in-progress">0</span>
+            </div>
+            <div class="scrum-cards-container" id="cards-in-progress"></div>
+          </div>
+
+          <!-- Testing -->
+          <div class="scrum-column col-testing" ondragover="allowDrop(event)" ondrop="handleDrop(event, 'testing')">
+            <div class="scrum-column-header">
+              <span class="column-title"><i class="fa-solid fa-vial-circle-check"></i> Testing</span>
+              <span class="column-count" id="count-testing">0</span>
+            </div>
+            <div class="scrum-cards-container" id="cards-testing"></div>
+          </div>
+
+          <!-- Completed -->
+          <div class="scrum-column col-completed" ondragover="allowDrop(event)" ondrop="handleDrop(event, 'completed')">
+            <div class="scrum-column-header">
+              <span class="column-title"><i class="fa-solid fa-circle-check"></i> Completed</span>
+              <span class="column-count" id="count-completed">0</span>
+            </div>
+            <div class="scrum-cards-container" id="cards-completed"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-TAB B: SPRINT BURNDOWN CHARTS -->
+      <div class="agile-subview" id="agile-subview-burndown" style="display: none;">
+        <div class="filter-row" style="margin-bottom: 1.5rem;">
+          <div style="display: flex; gap: 1rem; align-items: center;">
+            <label style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">Select Sprint Iteration:</label>
+            <select id="burndownSprintSelect" class="select-filter" onchange="renderBurndownChart()">
+              <option value="SP-1">Sprint 1 (Committed: 11 SP | Delivered: 11 SP)</option>
+              <option value="SP-2">Sprint 2 (Committed: 13 SP | Delivered: 13 SP)</option>
+              <option value="SP-3" selected>Sprint 3 (Committed: 20 SP | Delivered: 20 SP)</option>
+              <option value="SP-4">Sprint 4 (Committed: 21 SP | Active)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="glass-panel" style="margin-bottom: 2rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h4 id="burndownTitle"><i class="fa-solid fa-chart-line text-primary"></i> Sprint 3 Burndown Chart (Remaining Story Points vs Days)</h4>
+            <div style="display: flex; gap: 1.5rem; font-size: 0.8rem; font-weight: 600;">
+              <span style="color: #64748b;"><i class="fa-solid fa-minus"></i> Ideal Guideline (Linear)</span>
+              <span style="color: #6366f1;"><i class="fa-solid fa-circle"></i> Actual Remaining Points</span>
+            </div>
+          </div>
+          <div class="canvas-wrapper">
+            <canvas id="burndownCanvas" width="900" height="380" style="width: 100%; max-height: 400px;"></canvas>
+          </div>
+        </div>
+
+        <!-- Burndown Metrics Table -->
+        <div class="glass-panel" style="padding: 0; overflow: hidden;">
+          <div style="padding: 1rem 1.5rem; background: rgba(15,23,42,0.6); border-bottom: 1px solid var(--border-subtle);">
+            <h4><i class="fa-solid fa-table"></i> Daily Burndown Log & Story Completion</h4>
+          </div>
+          <div class="table-responsive">
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th>Sprint Day</th>
+                  <th>Ideal Remaining (SP)</th>
+                  <th>Actual Remaining (SP)</th>
+                  <th>Variance</th>
+                  <th>Status Assessment</th>
+                </tr>
+              </thead>
+              <tbody id="burndownTableBody">
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-TAB C: PLANNING POKER ESTIMATOR -->
+      <div class="agile-subview" id="agile-subview-poker" style="display: none;">
+        <div class="glass-panel" style="margin-bottom: 2rem;">
+          <h3 style="margin-bottom: 0.5rem;"><i class="fa-solid fa-cards text-primary"></i> Planning Poker Estimation Suite</h3>
+          <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.5rem;">
+            Select a User Story to size, then pick your Fibonacci card (1, 2, 3, 5, 8, 13) to simulate team consensus.
+          </p>
+
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label>Select User Story for Estimation</label>
+            <select id="pokerStorySelect" class="form-select" onchange="selectPokerStory(this.value)">
+              <!-- Populated via JS -->
+            </select>
+          </div>
+
+          <!-- Active Story Details -->
+          <div id="pokerStoryDetailBox" style="background: rgba(15,23,42,0.8); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.75rem;">
+            <!-- Rendered via JS -->
+          </div>
+
+          <!-- Fibonacci Cards Deck -->
+          <h4 style="margin-bottom: 1rem; font-size: 0.9rem; text-transform: uppercase; color: var(--text-muted);">Choose Story Points Card:</h4>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;">
+            <div class="poker-card" onclick="castPokerVote(1)">
+              <span class="poker-number">1</span>
+              <span class="poker-label">Very Easy</span>
+            </div>
+            <div class="poker-card" onclick="castPokerVote(2)">
+              <span class="poker-number">2</span>
+              <span class="poker-label">Easy</span>
+            </div>
+            <div class="poker-card" onclick="castPokerVote(3)">
+              <span class="poker-number">3</span>
+              <span class="poker-label">Moderate</span>
+            </div>
+            <div class="poker-card" onclick="castPokerVote(5)">
+              <span class="poker-number">5</span>
+              <span class="poker-label">Difficult</span>
+            </div>
+            <div class="poker-card" onclick="castPokerVote(8)">
+              <span class="poker-number">8</span>
+              <span class="poker-label">Very Diff.</span>
+            </div>
+            <div class="poker-card" onclick="castPokerVote(13)">
+              <span class="poker-number">13</span>
+              <span class="poker-label">Complex</span>
+            </div>
+          </div>
+
+          <!-- Simulated Team Consensus Panel -->
+          <div id="pokerConsensusBox" style="display: none; background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.3); border-radius: var(--radius-md); padding: 1.5rem;">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-TAB D: SCRUM CEREMONIES SIMULATOR -->
+      <div class="agile-subview" id="agile-subview-ceremonies" style="display: none;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+          
+          <!-- Daily Standup Simulator -->
+          <div class="glass-panel">
+            <h3 style="margin-bottom: 0.5rem;"><i class="fa-solid fa-microphone text-primary"></i> Daily Scrum Standup Simulator</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem;">
+              Simulate 15-minute daily standup responses based on the 3 Agile questions.
+            </p>
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label>Select Team Member</label>
+              <select id="standupMemberSelect" class="form-select" onchange="loadMemberStandup(this.value)">
+                <option value="aarav">Aarav Mehta (Lead Architect)</option>
+                <option value="sanya">Sanya Verma (Frontend / UI)</option>
+                <option value="rohan">Rohan Gupta (Backend & Security)</option>
+                <option value="kavita">Kavita Patel (QA Automation)</option>
+              </select>
+            </div>
+            <div id="standupResponsesBox" style="background: rgba(15,23,42,0.8); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem; font-size: 0.88rem;">
+              <!-- Populated via JS -->
+            </div>
+          </div>
+
+          <!-- Sprint Retrospective Board -->
+          <div class="glass-panel">
+            <h3 style="margin-bottom: 0.5rem;"><i class="fa-solid fa-arrows-spin text-accent"></i> Sprint Retrospective Board</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem;">
+              Continuous inspect & adapt findings across 3 dimensions.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+              <div style="background: rgba(16,185,129,0.1); border-left: 4px solid var(--success); padding: 0.85rem 1rem; border-radius: 6px;">
+                <h5 style="color: var(--success); font-weight: 700; margin-bottom: 0.25rem;"><i class="fa-solid fa-thumbs-up"></i> What Went Well?</h5>
+                <p style="font-size: 0.82rem; color: var(--text-muted);">Quick persona switcher made user verification instantaneous; clean REST decoupling prevented merge blockers.</p>
+              </div>
+              <div style="background: rgba(244,63,94,0.1); border-left: 4px solid var(--danger); padding: 0.85rem 1rem; border-radius: 6px;">
+                <h5 style="color: var(--danger); font-weight: 700; margin-bottom: 0.25rem;"><i class="fa-solid fa-triangle-exclamation"></i> What Challenges Occurred?</h5>
+                <p style="font-size: 0.82rem; color: var(--text-muted);">5-point story (US-301) caused a temporary WIP bottleneck in Sprint 3 mid-week; edge cases in GPA rounding.</p>
+              </div>
+              <div style="background: rgba(99,102,241,0.1); border-left: 4px solid var(--primary); padding: 0.85rem 1rem; border-radius: 6px;">
+                <h5 style="color: #a5b4fc; font-weight: 700; margin-bottom: 0.25rem;"><i class="fa-solid fa-lightbulb"></i> What Improvements to Implement?</h5>
+                <p style="font-size: 0.82rem; color: var(--text-muted);">Decompose stories > 3 SP before sprint commitment; enforce strict WIP limit of 4 cards in 'In Progress'.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-TAB E: AGILE FRAMEWORKS MATRIX -->
+      <div class="agile-subview" id="agile-subview-frameworks" style="display: none;">
+        <div class="glass-panel" style="margin-bottom: 2rem;">
+          <h3 style="margin-bottom: 0.5rem;"><i class="fa-solid fa-scale-balanced text-primary"></i> Comprehensive Agile Frameworks Comparative Study</h3>
+          <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.5rem;">
+            Comparative analysis of 7 Agile methodologies with academic recommendation for SRAMP.
+          </p>
+
+          <div class="table-responsive">
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th>Framework</th>
+                  <th>Cadence</th>
+                  <th>Key Roles</th>
+                  <th>WIP Control</th>
+                  <th>Best Fit Team Size</th>
+                  <th>Complexity / Overhead</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Scrum</strong> (Recommended)</td>
+                  <td>1-4 Week Sprints</td>
+                  <td>PO, Scrum Master, Dev Team</td>
+                  <td>Sprint Backlog capacity</td>
+                  <td>3 - 9 developers</td>
+                  <td><span class="status-pill active">Low - Moderate</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Kanban</strong></td>
+                  <td>Continuous Flow</td>
+                  <td>None Prescribed</td>
+                  <td>Column WIP Limits</td>
+                  <td>Any team size</td>
+                  <td><span class="status-pill active">Very Low</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Extreme Programming (XP)</strong></td>
+                  <td>1-2 Week Iterations</td>
+                  <td>Customer, Programmer, Tracker</td>
+                  <td>Pair programming & TDD</td>
+                  <td>2 - 10 developers</td>
+                  <td><span class="status-pill probation">High Technical</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Lean Development</strong></td>
+                  <td>Continuous Value Pull</td>
+                  <td>Lean Champion</td>
+                  <td>Waste (Muda) elimination</td>
+                  <td>Organization-wide</td>
+                  <td><span class="status-pill active">Low Structural</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Large Scale Scrum (LeSS)</strong></td>
+                  <td>Shared Sprints</td>
+                  <td>Single PO, Multi-teams</td>
+                  <td>Shared Sprint Backlogs</td>
+                  <td>2 - 8 Scrum Teams</td>
+                  <td><span class="status-pill warning">Moderate</span></td>
+                </tr>
+                <tr>
+                  <td><strong>SAFe (Scaled Agile)</strong></td>
+                  <td>8-12 Wk Program Increments</td>
+                  <td>RTE, Solution Arch, Epic Owners</td>
+                  <td>Program Board WIP</td>
+                  <td>50 - 5000+ engineers</td>
+                  <td><span class="status-pill probation">Very High Bureaucracy</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Scrum@Scale</strong></td>
+                  <td>Multi-level Sprints</td>
+                  <td>SoSM, Chief Product Owner</td>
+                  <td>MetaScrum synchronization</td>
+                  <td>Multiple Scrum Teams</td>
+                  <td><span class="status-pill warning">Moderate</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="margin-top: 1.5rem; background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.25); border-radius: var(--radius-md); padding: 1.5rem;">
+            <h4 style="color: #a5b4fc; margin-bottom: 0.5rem;"><i class="fa-solid fa-circle-check"></i> Project Recommendation: Scrum + XP Engineering Practices</h4>
+            <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;">
+              For the <strong>Student Record and Academic Management Platform</strong>, the team firmly recommends <strong>Scrum hybridized with XP engineering practices</strong>. The single cross-functional team topology (5-7 members) benefits from Scrum’s clear roles, 2-week sprint demonstration cadence, and empirical inspection, while XP practices (CI/CD, code reviews, automated testing) guarantee zero regression bugs in critical grade and attendance computations without the heavy bureaucratic overhead of enterprise frameworks like SAFe.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 7: AGILE DELIVERABLES VIEWER -->
+    <section class="view-section" id="view-docs">
+      <div class="section-header-row">
+        <div class="section-title-wrap">
+          <h2><i class="fa-solid fa-book-bookmark text-primary"></i> Agile Deliverables & Project Reports Library</h2>
+          <p>Read, copy, or print any of the 16 official Agile project deliverables required for Unit-2 submission.</p>
+        </div>
+        <div class="action-buttons-group">
+          <button class="btn btn-secondary" onclick="copyActiveDocContent()"><i class="fa-solid fa-copy"></i> Copy Markdown</button>
+          <button class="btn btn-primary" onclick="printDocContent()"><i class="fa-solid fa-print"></i> Print Document</button>
+        </div>
+      </div>
+
+      <div class="docs-layout">
+        <!-- Sidebar Document Selector -->
+        <div class="docs-sidebar" id="docsIndexList">
+          <!-- Populated via JS -->
+        </div>
+
+        <!-- Document Viewer Reader -->
+        <div class="doc-reader-body" id="docViewerContent">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ==========================================
+     MODALS SECTION
+     ========================================== -->
+
+<!-- ADD STUDENT MODAL -->
+<div class="modal-overlay" id="addStudentModal">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-user-plus text-primary"></i> Register New Student</h3>
+      <button class="modal-close-btn" onclick="closeModal('addStudentModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="addStudentForm" onsubmit="submitAddStudent(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Student ID (Roll No) *</label>
+            <input type="text" id="newStudentId" class="form-input" placeholder="e.g. STU1009" required>
+          </div>
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="newStudentName" class="form-input" placeholder="e.g. Aditi Sen" required>
+          </div>
+          <div class="form-group">
+            <label>University Email *</label>
+            <input type="email" id="newStudentEmail" class="form-input" placeholder="e.g. aditi.sen@university.edu" required>
+          </div>
+          <div class="form-group">
+            <label>Contact Phone</label>
+            <input type="text" id="newStudentPhone" class="form-input" placeholder="+91 98765 00000">
+          </div>
+          <div class="form-group">
+            <label>Department *</label>
+            <select id="newStudentDept" class="form-select" required>
+              <option value="Computer Science">Computer Science</option>
+              <option value="Information Technology">Information Technology</option>
+              <option value="Electrical Engineering">Electrical Engineering</option>
+              <option value="Mechanical Engineering">Mechanical Engineering</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Academic Year</label>
+            <select id="newStudentYear" class="form-select">
+              <option value="1st Year">1st Year</option>
+              <option value="2nd Year">2nd Year</option>
+              <option value="3rd Year">3rd Year</option>
+              <option value="4th Year">4th Year</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer" style="padding: 1.5rem 0 0 0;">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('addStudentModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Register Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW STUDENT PROFILE MODAL -->
+<div class="modal-overlay" id="studentProfileModal">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-address-card text-primary"></i> Student Profile Dossier</h3>
+      <button class="modal-close-btn" onclick="closeModal('studentProfileModal')">&times;</button>
+    </div>
+    <div class="modal-body" id="studentProfileContent">
+      <!-- Populated via JS -->
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('studentProfileModal')">Close</button>
+      <button class="btn btn-primary" onclick="printStudentProfile()"><i class="fa-solid fa-print"></i> Print Dossier</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD COURSE MODAL -->
+<div class="modal-overlay" id="addCourseModal">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-book-medical text-primary"></i> Add Course Offering</h3>
+      <button class="modal-close-btn" onclick="closeModal('addCourseModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="addCourseForm" onsubmit="submitAddCourse(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Course Code *</label>
+            <input type="text" id="newCourseCode" class="form-input" placeholder="e.g. CS401" required>
+          </div>
+          <div class="form-group">
+            <label>Credits (1-4) *</label>
+            <input type="number" id="newCourseCredits" class="form-input" min="1" max="4" value="3" required>
+          </div>
+          <div class="form-group-full form-group">
+            <label>Course Title *</label>
+            <input type="text" id="newCourseTitle" class="form-input" placeholder="e.g. Cloud Computing & Microservices" required>
+          </div>
+          <div class="form-group">
+            <label>Department *</label>
+            <select id="newCourseDept" class="form-select" required>
+              <option value="Computer Science">Computer Science</option>
+              <option value="Information Technology">Information Technology</option>
+              <option value="Electrical Engineering">Electrical Engineering</option>
+              <option value="Mechanical Engineering">Mechanical Engineering</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Assigned Faculty Instructor</label>
+            <input type="text" id="newCourseInstructor" class="form-input" placeholder="e.g. Dr. Rajesh Kumar">
+          </div>
+          <div class="form-group-full form-group">
+            <label>Course Description / Syllabus Overview</label>
+            <textarea id="newCourseDesc" class="form-textarea" placeholder="Key objectives, prerequisites, and evaluation structure..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer" style="padding: 1.5rem 0 0 0;">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('addCourseModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Create Course</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- COURSE ENROLLMENT MODAL -->
+<div class="modal-overlay" id="enrollModal">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-user-check text-primary"></i> Course Enrollment Manager</h3>
+      <button class="modal-close-btn" onclick="closeModal('enrollModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <h4 id="enrollCourseHeading" style="margin-bottom: 0.5rem;">Enroll Students</h4>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        Check or uncheck students to update the active course enrollment roster.
+      </p>
+      <div id="enrollStudentChecklist" style="max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem;">
+        <!-- Populated via JS -->
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('enrollModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEnrollmentChanges()"><i class="fa-solid fa-floppy-disk"></i> Save Enrollments</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRINTABLE RESULT SHEET MODAL -->
+<div class="modal-overlay" id="resultSheetModal">
+  <div class="modal-dialog" style="max-width: 750px;">
+    <div class="modal-header no-print">
+      <h3><i class="fa-solid fa-file-invoice text-primary"></i> Official Student Result Sheet / Transcript</h3>
+      <button class="modal-close-btn" onclick="closeModal('resultSheetModal')">&times;</button>
+    </div>
+    <div class="modal-body" id="resultSheetContent">
+      <!-- Populated via JS -->
+    </div>
+    <div class="modal-footer no-print">
+      <button class="btn btn-secondary" onclick="closeModal('resultSheetModal')">Close</button>
+      <button class="btn btn-primary" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Official Transcript</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD USER STORY MODAL (Scrum Suite) -->
+<div class="modal-overlay" id="addStoryModal">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-plus-circle text-primary"></i> Create Agile User Story</h3>
+      <button class="modal-close-btn" onclick="closeModal('addStoryModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="addStoryForm" onsubmit="submitAddStory(event)">
+        <div class="form-grid">
+          <div class="form-group-full form-group">
+            <label>Story Title *</label>
+            <input type="text" id="newStoryTitle" class="form-input" placeholder="e.g. Automated Parent SMS Attendance Alert" required>
+          </div>
+          <div class="form-group">
+            <label>Epic *</label>
+            <select id="newStoryEpic" class="form-select" required>
+              <option value="Student Management">Student Management</option>
+              <option value="Course Management">Course Management</option>
+              <option value="Attendance Management">Attendance Management</option>
+              <option value="Academic Performance">Academic Performance</option>
+              <option value="Authentication">Authentication</option>
+              <option value="Notifications">Notifications</option>
+              <option value="Reporting & Analytics">Reporting & Analytics</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>User Role *</label>
+            <input type="text" id="newStoryRole" class="form-input" placeholder="e.g. Faculty Member" required>
+          </div>
+          <div class="form-group-full form-group">
+            <label>I want to... (Feature / Desire) *</label>
+            <input type="text" id="newStoryWant" class="form-input" placeholder="e.g. trigger automatic SMS when student attendance drops below 75%" required>
+          </div>
+          <div class="form-group-full form-group">
+            <label>So that... (Business Benefit / Value) *</label>
+            <input type="text" id="newStorySoThat" class="form-input" placeholder="e.g. guardians are informed before final exam debarment" required>
+          </div>
+          <div class="form-group">
+            <label>Story Points (Planning Poker Scale)</label>
+            <select id="newStoryPoints" class="form-select">
+              <option value="1">1 (Very Easy)</option>
+              <option value="2">2 (Easy)</option>
+              <option value="3" selected>3 (Moderate)</option>
+              <option value="5">5 (Difficult)</option>
+              <option value="8">8 (Very Difficult)</option>
+              <option value="13">13 (Complex)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Priority</label>
+            <select id="newStoryPriority" class="form-select">
+              <option value="High">High (Must Have)</option>
+              <option value="Medium" selected>Medium (Should Have)</option>
+              <option value="Low">Low (Could Have)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Target Sprint</label>
+            <select id="newStorySprint" class="form-select">
+              <option value="Sprint 4">Sprint 4</option>
+              <option value="Sprint 3">Sprint 3</option>
+              <option value="Sprint 2">Sprint 2</option>
+              <option value="Sprint 1">Sprint 1</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Assignee</label>
+            <select id="newStoryAssignee" class="form-select">
+              <option value="Aarav Mehta">Aarav Mehta (Lead Architect)</option>
+              <option value="Sanya Verma">Sanya Verma (Frontend / UI)</option>
+              <option value="Rohan Gupta">Rohan Gupta (Backend & Security)</option>
+              <option value="Kavita Patel">Kavita Patel (QA Automation)</option>
+              <option value="Vikram Joshi">Vikram Joshi (DevOps)</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer" style="padding: 1.5rem 0 0 0;">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('addStoryModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Add to Product Backlog</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Custom Planning Poker Styles -->
+<style>
+.poker-card {
+  width: 90px;
+  height: 120px;
+  background: var(--bg-card);
+  border: 2px solid var(--border-subtle);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+.poker-card:hover {
+  transform: translateY(-6px) scale(1.05);
+  border-color: var(--primary);
+  box-shadow: 0 10px 20px rgba(99,102,241,0.3);
+  background: rgba(99,102,241,0.15);
+}
+.poker-number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  font-family: var(--font-mono);
+}
+.poker-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-top: 0.2rem;
+}
+</style>
+
+<!-- MAIN APP SCRIPT -->
+<script src="js/app.js"></script>
+
+</body>
+</html>
