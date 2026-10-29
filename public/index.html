@@ -65,7 +65,10 @@
 
   <!-- MAIN NAVIGATION TABS -->
   <nav class="main-nav-bar">
-    <button class="nav-tab-btn active" id="tabBtn-students" onclick="switchMainTab('students')">
+    <button class="nav-tab-btn active" id="tabBtn-dashboard" onclick="switchMainTab('dashboard')">
+      <i class="fa-solid fa-gauge-high"></i> Executive Dashboard
+    </button>
+    <button class="nav-tab-btn" id="tabBtn-students" onclick="switchMainTab('students')">
       <i class="fa-solid fa-users"></i> Students
     </button>
     <button class="nav-tab-btn" id="tabBtn-courses" onclick="switchMainTab('courses')">
@@ -91,8 +94,131 @@
   <!-- MAIN VIEWPORT -->
   <main class="main-view-container">
 
+    <!-- TAB 0: EXECUTIVE DASHBOARD -->
+    <section class="view-section active" id="view-dashboard">
+      <!-- HERO BANNER -->
+      <div class="dashboard-hero">
+        <div class="hero-left">
+          <h1 class="hero-greeting">Welcome back, <span id="dashHeroUserName">Dean Anita Desai</span> 👋</h1>
+          <p class="hero-subtitle">
+            Executive Academic Operations &bull; Semester 5 (2026–2027) &bull; Integrated Agile Scrum Telemetry Center
+          </p>
+          <div class="hero-meta-badges">
+            <span class="hero-badge-pill active-sprint"><i class="fa-solid fa-bolt text-warning"></i> Sprint 4 Active (65% Delivered)</span>
+            <span class="hero-badge-pill status-healthy"><i class="fa-solid fa-shield-halved"></i> Institutional Health 99.98%</span>
+            <span class="hero-badge-pill"><i class="fa-solid fa-fingerprint text-accent"></i> Multi-Role RBAC Active</span>
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="hero-stat-box">
+            <div class="stat-val" id="dashHeroStudents">8</div>
+            <div class="stat-lbl">Active Students</div>
+            <div class="delta-pill positive" style="margin-top: 0.35rem;"><i class="fa-solid fa-arrow-trend-up"></i> +12.5% vs Prev</div>
+          </div>
+          <div class="hero-stat-box">
+            <div class="stat-val" id="dashHeroAttendance">85.5%</div>
+            <div class="stat-lbl">Campus Attendance</div>
+            <div class="delta-pill positive" style="margin-top: 0.35rem;"><i class="fa-solid fa-check"></i> Meets Statutory >=75%</div>
+          </div>
+          <div class="hero-stat-box">
+            <div class="stat-val" id="dashHeroCgpa">8.32</div>
+            <div class="stat-lbl">Average CGPA</div>
+            <div class="delta-pill positive" style="margin-top: 0.35rem;"><i class="fa-solid fa-star"></i> High Distinction</div>
+          </div>
+          <div class="hero-stat-box">
+            <div class="stat-val" id="dashHeroStoryPoints">49 / 75</div>
+            <div class="stat-lbl">Sprint Story Points</div>
+            <div class="mini-progress-track">
+              <div class="mini-progress-fill" style="width: 65%; background: var(--primary-gradient);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUICK ACTION HUB -->
+      <div class="quick-action-strip">
+        <span class="quick-action-title"><i class="fa-solid fa-bolt"></i> Quick Actions:</span>
+        <button class="action-pill-btn" onclick="switchMainTab('attendance')"><i class="fa-solid fa-calendar-check"></i> Take Class Attendance</button>
+        <button class="action-pill-btn" onclick="switchMainTab('marks')"><i class="fa-solid fa-award"></i> Enter Assessment Marks</button>
+        <button class="action-pill-btn rbac-admin-only" onclick="openAddStudentModal()"><i class="fa-solid fa-user-plus"></i> Register Student</button>
+        <button class="action-pill-btn" onclick="switchMainTab('agile')"><i class="fa-solid fa-cubes"></i> Open Scrum Board</button>
+        <button class="action-pill-btn" onclick="openResultSheetModal()"><i class="fa-solid fa-print"></i> Generate Transcript</button>
+        <button class="action-pill-btn" onclick="exportStudentsCsv()"><i class="fa-solid fa-download"></i> Export CSV</button>
+      </div>
+
+      <!-- DUAL ANALYTICS GRID 1: CHARTS -->
+      <div class="dashboard-grid-dual">
+        <div class="glass-panel">
+          <div class="dash-card-header">
+            <h3><i class="fa-solid fa-chart-column text-primary"></i> Institutional Grade Curve & Performance</h3>
+            <span class="status-pill active" style="font-size: 0.72rem;">Passing Rate: 96.2%</span>
+          </div>
+          <div class="canvas-wrapper">
+            <canvas id="dashGradeDistCanvas" width="560" height="240" style="width: 100%;"></canvas>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-top: 1rem; font-size: 0.78rem; color: var(--text-muted); border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
+            <span><i class="fa-solid fa-circle text-primary"></i> A+ / A Distinction: <strong>77.8%</strong></span>
+            <span><i class="fa-solid fa-circle text-warning"></i> B / C Average: <strong>11.1%</strong></span>
+            <span><i class="fa-solid fa-circle text-danger"></i> D Passing: <strong>11.1%</strong></span>
+            <span><i class="fa-solid fa-circle" style="color: #64748b;"></i> Fail (F): <strong>0.0%</strong></span>
+          </div>
+        </div>
+
+        <div class="glass-panel">
+          <div class="dash-card-header">
+            <h3><i class="fa-solid fa-building-columns text-accent"></i> Departmental Attendance & CGPA Benchmark</h3>
+            <span class="status-pill active" style="font-size: 0.72rem;">All 4 Departments Active</span>
+          </div>
+          <div class="canvas-wrapper">
+            <canvas id="dashDeptCompareCanvas" width="560" height="240" style="width: 100%;"></canvas>
+          </div>
+          <div style="display: flex; justify-content: space-around; margin-top: 1rem; font-size: 0.78rem; color: var(--text-muted); border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
+            <span><i class="fa-solid fa-square" style="color: #6366f1;"></i> Attendance %</span>
+            <span><i class="fa-solid fa-square" style="color: #06b6d4;"></i> Avg CGPA (Scaled x10)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DUAL ANALYTICS GRID 2: HONORS ROLL & AT-RISK WATCHLIST -->
+      <div class="dashboard-grid-dual">
+        <!-- Top Performing Students -->
+        <div class="glass-panel">
+          <div class="dash-card-header">
+            <h3><i class="fa-solid fa-trophy text-warning"></i> Academic Honors Roll (Dean's List)</h3>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">Top Performers &bull; Sem 5</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;" id="dashHonorsList">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- At-Risk Attendance Watchlist -->
+        <div class="glass-panel">
+          <div class="dash-card-header">
+            <h3><i class="fa-solid fa-triangle-exclamation text-danger"></i> At-Risk Attendance Intervention Watchlist</h3>
+            <span class="status-pill probation" style="font-size: 0.72rem;" id="dashAtRiskBadge">2 Students &lt; 75%</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;" id="dashAtRiskList">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- CAMPUS LIVE ACTIVITY & AGILE TELEMETRY STREAM -->
+      <div class="glass-panel">
+        <div class="dash-card-header">
+          <h3><i class="fa-solid fa-satellite-dish text-primary"></i> Real-time Campus & Agile Telemetry Stream</h3>
+          <span style="font-size: 0.75rem; color: var(--text-dim);"><i class="fa-solid fa-signal text-success"></i> Live Sync Connected</span>
+        </div>
+        <div class="activity-timeline" id="dashActivityStream">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+    </section>
+
     <!-- TAB 1: STUDENTS (Epic 1) -->
-    <section class="view-section active" id="view-students">
+    <section class="view-section" id="view-students">
       <div class="section-header-row">
         <div class="section-title-wrap">
           <h2><i class="fa-solid fa-id-card-clip text-primary"></i> Student Lifecycle Directory</h2>

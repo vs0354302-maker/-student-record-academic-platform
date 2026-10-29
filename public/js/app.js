@@ -3,7 +3,7 @@
 
 let state = {
   activeRole: 'admin',
-  currentTab: 'students',
+  currentTab: 'dashboard',
   agileSubTab: 'board',
   students: [],
   courses: [],
@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   await loadAllData();
   applyRolePermissions();
+  renderDashboard();
   renderStudentsTable();
   renderCourseCards();
   populateCourseSelectors();
@@ -60,6 +61,7 @@ async function loadAllData() {
     state.sprints = await spRes.json();
 
     updateKPISummaries();
+    renderDashboard();
   } catch (err) {
     console.error('Failed to load initial data:', err);
     showToast('Failed to connect to backend server. Make sure node server.js is running.', 'danger');
@@ -72,6 +74,7 @@ async function loadAllData() {
 function changePersona(role) {
   state.activeRole = role;
   applyRolePermissions();
+  renderDashboard();
   showToast(`Switched active persona to: ${role.toUpperCase()}`, 'info');
 }
 
@@ -106,6 +109,9 @@ function switchMainTab(tabId) {
   const activeSec = document.getElementById(`view-${tabId}`);
   if (activeSec) activeSec.classList.add('active');
 
+  if (tabId === 'dashboard') {
+    setTimeout(renderDashboard, 50);
+  }
   if (tabId === 'reports') {
     setTimeout(renderAnalyticsCharts, 100);
   }
@@ -113,6 +119,296 @@ function switchMainTab(tabId) {
     setTimeout(renderBurndownChart, 100);
   }
 }
+
+// ==========================================
+// EXECUTIVE DASHBOARD RENDERING
+// ==========================================
+function renderDashboard() {
+  // Update Hero Persona Greeting
+  const heroNameEl = document.getElementById('dashHeroUserName');
+  if (heroNameEl) {
+    if (state.activeRole === 'admin') heroNameEl.textContent = 'Dean Anita Desai (Administrator)';
+    else if (state.activeRole === 'faculty') heroNameEl.textContent = 'Dr. Rajesh Kumar (Faculty Lead)';
+    else heroNameEl.textContent = 'Priya Sharma (Student Scholar)';
+  }
+
+  // Update Hero Stat Tiles
+  const total = state.students.length;
+  const avgAtt = total > 0 ? (state.students.reduce((acc, s) => acc + (s.attendance || 100), 0) / total).toFixed(1) : 0;
+  const avgCgpa = total > 0 ? (state.students.reduce((acc, s) => acc + (s.cgpa || 8.0), 0) / total).toFixed(2) : 0;
+  
+  const completedSP = state.backlog.filter(s => s.status === 'completed').reduce((acc, s) => acc + (s.storyPoints || 0), 0);
+  const totalSP = state.backlog.reduce((acc, s) => acc + (s.storyPoints || 0), 0) || 75;
+
+  const hStudents = document.getElementById('dashHeroStudents');
+  const hAtt = document.getElementById('dashHeroAttendance');
+  const hCgpa = document.getElementById('dashHeroCgpa');
+  const hSP = document.getElementById('dashHeroStoryPoints');
+
+  if (hStudents) hStudents.textContent = total;
+  if (hAtt) hAtt.textContent = `${avgAtt}%`;
+  if (hCgpa) hCgpa.textContent = avgCgpa;
+  if (hSP) hSP.textContent = `${completedSP} / ${totalSP}`;
+
+  // Draw Charts
+  drawDashGradeCurve();
+  drawDashDeptCompare();
+
+  // Render Honors List
+  renderDashHonorsList();
+
+  // Render At-Risk Intervention List
+  renderDashAtRiskList();
+
+  // Render Live Activity Timeline
+  renderDashActivityStream();
+}
+
+function drawDashGradeCurve() {
+  const canvas = document.getElementById('dashGradeDistCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const gradeCounts = { 'A+': 0, 'A': 0, 'B': 0, 'C': 0, 'D': 0, 'F': 0 };
+  state.marks.forEach(m => {
+    if (gradeCounts[m.grade] !== undefined) gradeCounts[m.grade]++;
+  });
+
+  const labels = Object.keys(gradeCounts);
+  const values = Object.values(gradeCounts);
+  const maxVal = Math.max(...values, 4);
+
+  const paddingLeft = 45;
+  const paddingRight = 20;
+  const paddingTop = 25;
+  const paddingBottom = 35;
+  const chartW = canvas.width - paddingLeft - paddingRight;
+  const chartH = canvas.height - paddingTop - paddingBottom;
+  const barW = chartW / (labels.length * 1.7);
+
+  // Background grid
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = paddingTop + (chartH / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(paddingLeft, y);
+    ctx.lineTo(canvas.width - paddingRight, y);
+    ctx.stroke();
+  }
+
+  labels.forEach((label, i) => {
+    const val = values[i];
+    const barHeight = (val / maxVal) * chartH;
+    const x = paddingLeft + i * (chartW / labels.length) + (chartW / labels.length - barW) / 2;
+    const y = canvas.height - paddingBottom - barHeight;
+
+    // Gradient bar
+    const grad = ctx.createLinearGradient(0, y, 0, canvas.height - paddingBottom);
+    if (label.includes('A')) {
+      grad.addColorStop(0, '#6366f1');
+      grad.addColorStop(1, '#a855f7');
+    } else if (label === 'B' || label === 'C') {
+      grad.addColorStop(0, '#06b6d4');
+      grad.addColorStop(1, '#3b82f6');
+    } else {
+      grad.addColorStop(0, '#f59e0b');
+      grad.addColorStop(1, '#ef4444');
+    }
+
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.roundRect(x, y, barW, barHeight, [6, 6, 0, 0]);
+    ctx.fill();
+
+    // Value text
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 12px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(val, x + barW / 2, y - 6);
+
+    // Label text
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '600 12px Inter, sans-serif';
+    ctx.fillText(label, x + barW / 2, canvas.height - paddingBottom + 18);
+  });
+}
+
+function drawDashDeptCompare() {
+  const canvas = document.getElementById('dashDeptCompareCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const depts = [
+    { name: 'CS', fullName: 'Computer Science' },
+    { name: 'IT', fullName: 'Information Tech' },
+    { name: 'EE', fullName: 'Electrical Eng' },
+    { name: 'ME', fullName: 'Mechanical Eng' }
+  ];
+
+  const paddingLeft = 45;
+  const paddingRight = 20;
+  const paddingTop = 25;
+  const paddingBottom = 35;
+  const chartW = canvas.width - paddingLeft - paddingRight;
+  const chartH = canvas.height - paddingTop - paddingBottom;
+
+  const barGroupWidth = chartW / depts.length;
+  const singleBarW = barGroupWidth * 0.28;
+
+  // Background grid
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = paddingTop + (chartH / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(paddingLeft, y);
+    ctx.lineTo(canvas.width - paddingRight, y);
+    ctx.stroke();
+  }
+
+  depts.forEach((dept, i) => {
+    const deptStudents = state.students.filter(s => s.department === dept.fullName || s.department.startsWith(dept.name));
+    const attVal = deptStudents.length > 0 ? (deptStudents.reduce((a, s) => a + (s.attendance || 100), 0) / deptStudents.length) : 85;
+    const cgpaVal = deptStudents.length > 0 ? (deptStudents.reduce((a, s) => a + (s.cgpa || 8.0), 0) / deptStudents.length) * 10 : 80;
+
+    const groupX = paddingLeft + i * barGroupWidth + (barGroupWidth - singleBarW * 2 - 8) / 2;
+
+    // Bar 1: Attendance %
+    const attHeight = (attVal / 100) * chartH;
+    const attY = canvas.height - paddingBottom - attHeight;
+    ctx.fillStyle = '#6366f1';
+    ctx.beginPath();
+    ctx.roundRect(groupX, attY, singleBarW, attHeight, [4, 4, 0, 0]);
+    ctx.fill();
+
+    // Bar 2: CGPA (x10)
+    const cgpaHeight = (cgpaVal / 100) * chartH;
+    const cgpaY = canvas.height - paddingBottom - cgpaHeight;
+    ctx.fillStyle = '#06b6d4';
+    ctx.beginPath();
+    ctx.roundRect(groupX + singleBarW + 6, cgpaY, singleBarW, cgpaHeight, [4, 4, 0, 0]);
+    ctx.fill();
+
+    // Group Label
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = 'bold 12px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(dept.name, groupX + singleBarW + 3, canvas.height - paddingBottom + 18);
+  });
+}
+
+function renderDashHonorsList() {
+  const container = document.getElementById('dashHonorsList');
+  if (!container) return;
+
+  const topStudents = [...state.students].sort((a, b) => (b.cgpa || 0) - (a.cgpa || 0)).slice(0, 3);
+  const rankBadges = ['rank-1', 'rank-2', 'rank-3'];
+
+  container.innerHTML = topStudents.map((s, idx) => `
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; background: rgba(15,23,42,0.5); border: 1px solid var(--border-subtle); border-radius: var(--radius-md);">
+      <div style="display: flex; align-items: center; gap: 0.85rem;">
+        <span class="honor-rank-badge ${rankBadges[idx]}">${idx + 1}</span>
+        <div>
+          <div style="font-weight: 700; font-size: 0.92rem;">${s.name} <span style="font-size: 0.75rem; color: var(--accent); font-family: var(--font-mono);">(${s.id})</span></div>
+          <div style="font-size: 0.75rem; color: var(--text-dim);">${s.department} &bull; Attendance: ${s.attendance || 100}%</div>
+        </div>
+      </div>
+      <div style="text-align: right; display: flex; align-items: center; gap: 1rem;">
+        <div>
+          <div style="font-size: 1.1rem; font-weight: 800; color: #fff;">${s.cgpa ? s.cgpa.toFixed(2) : '8.00'}</div>
+          <div style="font-size: 0.68rem; color: var(--text-dim); text-transform: uppercase;">CGPA / 10.0</div>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="viewStudentProfile('${s.id}')" title="View Dossier"><i class="fa-solid fa-eye"></i></button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderDashAtRiskList() {
+  const container = document.getElementById('dashAtRiskList');
+  const badge = document.getElementById('dashAtRiskBadge');
+  if (!container) return;
+
+  const atRisk = state.students.filter(s => (s.attendance || 100) < 75);
+  if (badge) badge.textContent = `${atRisk.length} Students < 75%`;
+
+  if (atRisk.length === 0) {
+    container.innerHTML = `
+      <div style="padding: 1.5rem; text-align: center; color: var(--success); font-weight: 600;">
+        <i class="fa-solid fa-circle-check" style="font-size: 1.8rem; margin-bottom: 0.5rem; display: block;"></i>
+        Excellent! All students currently comply with the >= 75% attendance threshold.
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = atRisk.map(s => `
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; background: rgba(244,63,94,0.06); border: 1px solid rgba(244,63,94,0.25); border-radius: var(--radius-md);">
+      <div>
+        <div style="font-weight: 700; font-size: 0.92rem; color: #fff;">${s.name} <span style="font-size: 0.75rem; color: var(--danger); font-family: var(--font-mono);">(${s.id})</span></div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">${s.department} &bull; Status: <span class="status-pill probation" style="padding: 0.1rem 0.4rem; font-size: 0.68rem;">${s.attendance}% Attendance</span></div>
+      </div>
+      <div>
+        <button class="btn btn-danger btn-sm" onclick="sendInterventionNotice('${s.id}', '${s.name}', ${s.attendance})">
+          <i class="fa-solid fa-paper-plane"></i> Dispatch Notice
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function sendInterventionNotice(studentId, name, attRate) {
+  try {
+    const res = await fetch('/api/notifications', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: `Official Attendance Shortage Notice: ${name}`,
+        message: `Student ${name} (${studentId}) attendance is critically low at ${attRate}%. Official notice dispatched to student and faculty advisor.`,
+        type: 'warning',
+        targetRole: 'all'
+      })
+    });
+
+    if (res.ok) {
+      const newNotif = await res.json();
+      state.notifications.unshift(newNotif);
+      renderNotifications();
+      showToast(`Warning notice dispatched for ${name} (${attRate}%)!`, 'warning');
+    }
+  } catch (err) {
+    showToast('Failed to dispatch notice.', 'danger');
+  }
+}
+
+function renderDashActivityStream() {
+  const container = document.getElementById('dashActivityStream');
+  if (!container) return;
+
+  const events = [
+    { icon: 'fa-clipboard-user', type: 'info', title: 'Daily Attendance Committed', desc: 'Dr. Rajesh Kumar recorded lecture session for CS301 (Data Structures). 6 of 7 enrolled marked Present.', time: '14 minutes ago' },
+    { icon: 'fa-award', type: 'success', title: 'Assessment Marks Published', desc: 'Semester midterm scores published for CS301 by examination board. Class average calculated at 86.4%.', time: '1 hour ago' },
+    { icon: 'fa-bolt', type: 'warning', title: 'Agile Sprint Increment', desc: 'User Story US-401 moved to "Testing" by Aarav Mehta. 5 Story Points queued for PO acceptance.', time: '3 hours ago' },
+    { icon: 'fa-user-plus', type: 'info', title: 'New Student Intake Processed', desc: 'Aditi Sen officially registered under Computer Science cohort for Academic Year 2026–2027.', time: 'Yesterday' }
+  ];
+
+  container.innerHTML = events.map(ev => `
+    <div class="activity-event-item">
+      <div class="activity-icon-badge notif-item-icon ${ev.type}">
+        <i class="fa-solid ${ev.icon}"></i>
+      </div>
+      <div style="flex: 1;">
+        <div style="font-weight: 700; font-size: 0.88rem; color: #fff;">${ev.title}</div>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.15rem; line-height: 1.4;">${ev.desc}</p>
+        <span style="font-size: 0.68rem; color: var(--text-dim); margin-top: 0.35rem; display: block;"><i class="fa-regular fa-clock"></i> ${ev.time}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
 
 function switchAgileSubTab(subTabId) {
   state.agileSubTab = subTabId;
